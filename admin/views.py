@@ -22,6 +22,7 @@ def admin_login(request):
         password = data["password"]
         user = authenticate(username=username, password=password)
         serial = MyUserSerializer(user, many=False)
+        print(user)
         if user is not None:
             if user.role == MyUser.UserRoles.ADMIN and user.is_superuser:
                 jwt_token = generate_jwt_token(user)
@@ -315,3 +316,19 @@ def update_reservation_status(request, id):
     except Exception as e:
         # Handle other exceptions
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["GET"])
+def reservations_per_month_chart(request):
+    if request.method == "GET":
+        reservations_data = Reservation.reservations_per_month()
+        serializer = ReservationMonthSerializer(reservations_data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def users_created_per_day(request):
+    if request.method == 'GET':
+        user_data = MyUser.objects.values('date_joined__date').annotate(count=Count('id'))
+        formatted_data = [{'date': entry['date_joined__date'], 'count': entry['count']} for entry in user_data]
+        return Response(formatted_data)

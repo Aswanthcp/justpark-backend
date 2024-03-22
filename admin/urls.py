@@ -13,12 +13,26 @@ urlpatterns = [
     path("get-Place-list/", views.getPlaces, name="getPlaces"),
     path("add-Place-new/", views.addparkingPlace, name="getPlaces"),
     path("get-Place-byID/<int:id>", views.getPlaceby_id, name="getPlaces"),
-    # slot logic 
+    # slot logic
     path("get-Parking-slot/", views.getParkingSLot, name="getParkingSLot"),
     path("book-slot/<int:id>", views.bookSlots, name="BlockUsers"),
     path("unbook-slot/<int:id>", views.UnbookSlots, name="UnbookSlots"),
     path("update-slot-price/<int:id>", views.UpdateSlotPrice, name="UpdateSlotPrice"),
     # reservations logic
     path("get-reservations-list/", views.getReservations, name="getUsers"),
-    path("update-reservations-status/<int:id>", views.update_reservation_status, name="update_reservation_status"),
+    path(
+        "update-reservations-status/<int:id>",
+        views.update_reservation_status,
+        name="update_reservation_status",
+    ),
+    path(
+        "reservations-per-month/",
+        views.reservations_per_month_chart,
+        name="reservations_per_month_chart",
+    ),
+    path(
+        "users-created-per-day/",
+        views.users_created_per_day,
+        name="users_created_per_day",
+    ),
 ]

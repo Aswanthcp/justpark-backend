@@ -61,3 +61,8 @@ class ReservationViewSerializer(serializers.ModelSerializer):
             "phone_number",
             "status",
         ]
+
+
+class ReservationMonthSerializer(serializers.Serializer):
+    month = serializers.IntegerField()
+    count = serializers.IntegerField()

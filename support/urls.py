@@ -8,5 +8,14 @@ urlpatterns = [
     path("get-users-list/", views.getUsers, name="getUsers"),
     path("get-booking-list/", views.getReservations, name="getReservations"),
     path("add-new-reservations/", views.addReservations, name="addReservations"),
-    path("get-slot-byPlace/<int:id>", views.getParkingSlotbyplace, name="getParkingSlotbyplace"),
+    path(
+        "get-slot-byPlace/<int:id>",
+        views.getParkingSlotbyplace,
+        name="getParkingSlotbyplace",
+    ),
+    path(
+        "reservations-per-month/<int:place_id>",
+        views.reservations_per_month_chart,
+        name="reservations_per_month_chart",
+    ),
 ]

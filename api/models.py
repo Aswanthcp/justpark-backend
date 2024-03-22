@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.db.models import Count
+from django.utils.timezone import now
+import datetime
+
 
 class MyUser(AbstractUser):
     class UserRoles(models.TextChoices):
@@ -28,6 +32,19 @@ class MyUser(AbstractUser):
 
     def __str__(self) -> str:
         return self.username
+
+    @classmethod
+    def customers_created_per_day(cls):
+        customers_per_day = (
+            cls.objects.filter(role=cls.UserRoles.CUSTOMER)
+            .values("date_joined__date")
+            .annotate(total=Count("id"))
+        )
+        data = [
+            {"date": entry["date_joined__date"], "count": entry["total"]}
+            for entry in customers_per_day
+        ]
+        return data
 
 
 class parkingPlace(models.Model):
@@ -103,6 +120,44 @@ class Reservation(models.Model):
         self.slot.save()
         super().delete(*args, **kwargs)
 
+    @classmethod
+    def reservations_per_month(cls):
+        current_month = now().month
+        current_year = now().year
+        start_date = datetime.date(current_year, current_month, 1)
+        end_date = start_date + datetime.timedelta(days=32)
+        reservations = (
+            cls.objects.filter(
+                reservation_time__gte=start_date, reservation_time__lt=end_date
+            )
+            .annotate(month=Count("reservation_time__month"))
+            .values("month")
+            .annotate(
+                count=Count("*")
+            )  # Count the number of reservations for each month
+        )
+        return reservations
+    
+    @classmethod
+    def reservations_per_month_place(cls, place_id):
+        current_month = now().month
+        current_year = now().year
+        start_date = datetime.date(current_year, current_month, 1)
+        end_date = start_date + datetime.timedelta(days=32)
+        reservations = (
+            cls.objects.filter(
+                slot__place_id=place_id,
+                reservation_time__gte=start_date,
+                reservation_time__lt=end_date
+            )
+            .annotate(month=Count("reservation_time__month"))
+            .values("month")
+            .annotate(
+                count=Count("*")
+            )  # Count the number of reservations for each month
+        )
+        return reservations
+
 
 class SupportPlace(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
@@ -110,8 +165,7 @@ class SupportPlace(models.Model):
 
     class Meta:
         unique_together = ("user", "parking_place")
-        
-        
+
 
 @receiver(post_delete, sender=Reservation)
 def update_slot_is_booked(sender, instance, **kwargs):

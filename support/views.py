@@ -163,7 +163,7 @@ def addReservations(request):
         user = MyUser.objects.create(
             username=data["username"],
             email=data["username"],
-            password=make_password('11111111'),
+            password=make_password("11111111"),
             first_name="first Name",
             last_name="second Name",
             address="main address",
@@ -205,3 +205,11 @@ def getParkingSlotbyplace(request, id):
     data = ParkingSlot.objects.filter(place__id=id)
     serializer = ParkingSlotSerializer(data, many=True)
     return Response(serializer.data)
+
+
+@api_view(["GET"])
+def reservations_per_month_chart(request, place_id):
+    if request.method == "GET":
+        reservations_data = Reservation.reservations_per_month_place(place_id)
+        serializer = ReservationMonthSerializer(reservations_data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
