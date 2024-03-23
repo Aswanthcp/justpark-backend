@@ -137,7 +137,7 @@ class Reservation(models.Model):
             )  # Count the number of reservations for each month
         )
         return reservations
-    
+
     @classmethod
     def reservations_per_month_place(cls, place_id):
         current_month = now().month
@@ -148,7 +148,7 @@ class Reservation(models.Model):
             cls.objects.filter(
                 slot__place_id=place_id,
                 reservation_time__gte=start_date,
-                reservation_time__lt=end_date
+                reservation_time__lt=end_date,
             )
             .annotate(month=Count("reservation_time__month"))
             .values("month")

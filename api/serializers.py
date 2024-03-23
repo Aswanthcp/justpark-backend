@@ -44,7 +44,7 @@ class ReservationSerializer(serializers.ModelSerializer):
 
 
 class ReservationViewSerializer(serializers.ModelSerializer):
-    slot = ParkingSlotSerializer(read_only=True)
+    slot = ParkingSlotViewSerializer(read_only=True)
     user = MyUserSerializer(read_only=True)
 
     class Meta:

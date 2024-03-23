@@ -20,6 +20,11 @@ urlpatterns = [
         name="get_parkingSlot_by_id",
     ),
     path(
+        "getParkingSLotby-PlaceId-SlotNumber/<int:place_id>/<int:slot_number>/",
+        views.getParkingSLotby_PlaceId_SlotNumber,
+        name="get_parking_slot_by_place_slot",
+    ),
+    path(
         "Create-BookParkinSlot-byuser/",
         views.Create_BookParkinSlot_byuser,
         name="Create_BookParkinSlot_byuser",
@@ -34,5 +39,4 @@ urlpatterns = [
         views.get_reservationby_id,
         name="get_reservationby_id",
     ),
-    
 ]

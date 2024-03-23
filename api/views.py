@@ -93,6 +93,18 @@ def getParkingSLotby_Id(request, id):
     return Response(serializer.data)
 
 
+@api_view(["GET"])
+def getParkingSLotby_PlaceId_SlotNumber(request, place_id, slot_number):
+    try:
+        parking_slot = ParkingSlot.objects.get(
+            place_id=place_id, slot_number=slot_number
+        )
+        serializer = ParkingSlotViewSerializer(parking_slot)
+        return Response(serializer.data)
+    except ParkingSlot.DoesNotExist:
+        return Response({"error": "Parking slot not found"}, status=404)
+
+
 @api_view(["POST"])
 def createParkingSlot(request):
     serializer = ParkingSlotSerializer(data=request.data)
@@ -112,7 +124,7 @@ def getParkingSlotbyplace(request, id):
 def get_reservationby_id(request, id):
 
     data = Reservation.objects.filter(user__id=id)
-    serializer = ReservationSerializer(data, many=True)
+    serializer = ReservationViewSerializer(data, many=True)
     return Response(serializer.data)
 
 
@@ -166,6 +178,7 @@ def Create_BookParkinSlot_byuser(request):
             "car_details": request.data.get("car_details"),
             "car_number": request.data.get("car_number"),
             "payment_id": str(request.data.get("payment_id")),
+            "payment_mode": str(request.data.get("payment_mode")),
         }
 
         reservation = Reservation.objects.create(**data)
