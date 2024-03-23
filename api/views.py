@@ -19,17 +19,17 @@ from .serializers import *
 @api_view(["POST"])
 def signup(request):
     data = request.data
+    print(data)
 
     try:
         user = MyUser.objects.create(
             username=data["email"],
             email=data["email"],
             password=make_password(data["password"]),
-            first_name=data["firstname"],
-            last_name=data["lastname"],
+            first_name=data["first_name"],
+            last_name=data["last_name"],
         )
         user.role = MyUser.UserRoles.CUSTOMER
-        user.phone_number = data.get("phone_number", "")
         user.save()
         serializer = MyUserSerializer(user, many=False)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
